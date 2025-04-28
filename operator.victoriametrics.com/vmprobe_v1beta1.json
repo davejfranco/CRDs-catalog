@@ -1,12 +1,12 @@
 {
-  "description": "VMProbe defines a probe for targets, that will be executed with prober, like blackbox exporter. It helps to monitor reachability of target with various checks.",
+  "description": "VMProbe defines a probe for targets, that will be executed with prober,\nlike blackbox exporter.\nIt helps to monitor reachability of target with various checks.",
   "properties": {
     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
       "type": "string"
     },
     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
       "type": "string"
     },
     "metadata": {
@@ -26,7 +26,8 @@
                   "type": "string"
                 },
                 "name": {
-                  "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                  "default": "",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -54,17 +55,18 @@
           "additionalProperties": false
         },
         "basicAuth": {
-          "description": "BasicAuth allow an endpoint to authenticate over basic authentication More info: https://prometheus.io/docs/operating/configuration/#endpoints",
+          "description": "BasicAuth allow an endpoint to authenticate over basic authentication",
           "properties": {
             "password": {
-              "description": "The secret in the service scrape namespace that contains the password for authentication. It must be at them same namespace as CRD",
+              "description": "Password defines reference for secret with password value\nThe secret needs to be in the same namespace as scrape object",
               "properties": {
                 "key": {
                   "description": "The key of the secret to select from.  Must be a valid secret key.",
                   "type": "string"
                 },
                 "name": {
-                  "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                  "default": "",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -80,18 +82,19 @@
               "additionalProperties": false
             },
             "password_file": {
-              "description": "PasswordFile defines path to password file at disk",
+              "description": "PasswordFile defines path to password file at disk\nmust be pre-mounted",
               "type": "string"
             },
             "username": {
-              "description": "The secret in the service scrape namespace that contains the username for authentication. It must be at them same namespace as CRD",
+              "description": "Username defines reference for secret with username value\nThe secret needs to be in the same namespace as scrape object",
               "properties": {
                 "key": {
                   "description": "The key of the secret to select from.  Must be a valid secret key.",
                   "type": "string"
                 },
                 "name": {
-                  "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                  "default": "",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -115,7 +118,7 @@
           "type": "string"
         },
         "bearerTokenSecret": {
-          "description": "Secret to mount to read bearer token for scraping targets. The secret needs to be in the same namespace as the service scrape and accessible by the victoria-metrics operator.",
+          "description": "Secret to mount to read bearer token for scraping targets. The secret\nneeds to be in the same namespace as the scrape object and accessible by\nthe victoria-metrics operator.",
           "nullable": true,
           "properties": {
             "key": {
@@ -123,7 +126,8 @@
               "type": "string"
             },
             "name": {
-              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+              "default": "",
+              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
               "type": "string"
             },
             "optional": {
@@ -142,16 +146,97 @@
           "description": "FollowRedirects controls redirects for scraping.",
           "type": "boolean"
         },
+        "honorLabels": {
+          "description": "HonorLabels chooses the metric's labels on collisions with target labels.",
+          "type": "boolean"
+        },
+        "honorTimestamps": {
+          "description": "HonorTimestamps controls whether vmagent respects the timestamps present in scraped data.",
+          "type": "boolean"
+        },
         "interval": {
-          "description": "Interval at which targets are probed using the configured prober. If not specified Prometheus' global scrape interval is used.",
+          "description": "Interval at which metrics should be scraped",
           "type": "string"
         },
         "jobName": {
           "description": "The job name assigned to scraped metrics by default.",
           "type": "string"
         },
+        "max_scrape_size": {
+          "description": "MaxScrapeSize defines a maximum size of scraped data for a job",
+          "type": "string"
+        },
+        "metricRelabelConfigs": {
+          "description": "MetricRelabelConfigs to apply to samples after scrapping.",
+          "items": {
+            "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/#relabeling",
+            "properties": {
+              "action": {
+                "description": "Action to perform based on regex matching. Default is 'replace'",
+                "type": "string"
+              },
+              "if": {
+                "description": "If represents metricsQL match expression (or list of expressions): '{__name__=~\"foo_.*\"}'",
+                "x-kubernetes-preserve-unknown-fields": true
+              },
+              "labels": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Labels is used together with Match for `action: graphite`",
+                "type": "object"
+              },
+              "match": {
+                "description": "Match is used together with Labels for `action: graphite`",
+                "type": "string"
+              },
+              "modulus": {
+                "description": "Modulus to take of the hash of the source label values.",
+                "format": "int64",
+                "type": "integer"
+              },
+              "regex": {
+                "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/vmagent/#relabeling-enhancements",
+                "x-kubernetes-preserve-unknown-fields": true
+              },
+              "replacement": {
+                "description": "Replacement value against which a regex replace is performed if the\nregular expression matches. Regex capture groups are available. Default is '$1'",
+                "type": "string"
+              },
+              "separator": {
+                "description": "Separator placed between concatenated source label values. default is ';'.",
+                "type": "string"
+              },
+              "source_labels": {
+                "description": "UnderScoreSourceLabels - additional form of source labels source_labels\nfor compatibility with original relabel config.\nif set  both sourceLabels and source_labels, sourceLabels has priority.\nfor details https://github.com/VictoriaMetrics/operator/issues/131",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "sourceLabels": {
+                "description": "The source labels select values from existing labels. Their content is concatenated\nusing the configured separator and matched against the configured regular expression\nfor the replace, keep, and drop actions.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "target_label": {
+                "description": "UnderScoreTargetLabel - additional form of target label - target_label\nfor compatibility with original relabel config.\nif set  both targetLabel and target_label, targetLabel has priority.\nfor details https://github.com/VictoriaMetrics/operator/issues/131",
+                "type": "string"
+              },
+              "targetLabel": {
+                "description": "Label to which the resulting value is written in a replace action.\nIt is mandatory for replace actions. Regex capture groups are available.",
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
         "module": {
-          "description": "The module to use for probing specifying how to probe the target. Example module configuring in the blackbox exporter: https://github.com/prometheus/blackbox_exporter/blob/master/example.yml",
+          "description": "The module to use for probing specifying how to probe the target.\nExample module configuring in the blackbox exporter:\nhttps://github.com/prometheus/blackbox_exporter/blob/master/example.yml",
           "type": "string"
         },
         "oauth2": {
@@ -168,7 +253,8 @@
                       "type": "string"
                     },
                     "name": {
-                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -191,7 +277,8 @@
                       "type": "string"
                     },
                     "name": {
-                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -218,7 +305,8 @@
                   "type": "string"
                 },
                 "name": {
-                  "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                  "default": "",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -274,18 +362,41 @@
           "description": "Optional HTTP URL parameters",
           "type": "object"
         },
+        "path": {
+          "description": "HTTP path to scrape for metrics.",
+          "type": "string"
+        },
+        "proxyURL": {
+          "description": "ProxyURL eg http://proxyserver:2195 Directs scrapes to proxy through this endpoint.",
+          "type": "string"
+        },
         "sampleLimit": {
           "description": "SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.",
           "format": "int64",
           "type": "integer"
         },
+        "scheme": {
+          "description": "HTTP scheme to use for scraping.",
+          "enum": [
+            "http",
+            "https",
+            "HTTPS",
+            "HTTP"
+          ],
+          "type": "string"
+        },
         "scrape_interval": {
-          "description": "ScrapeInterval is the same as Interval and has priority over it. one of scrape_interval or interval can be used",
+          "description": "ScrapeInterval is the same as Interval and has priority over it.\none of scrape_interval or interval can be used",
           "type": "string"
         },
         "scrapeTimeout": {
-          "description": "Timeout for scraping metrics from the Prometheus exporter.",
+          "description": "Timeout after which the scrape is ended",
           "type": "string"
+        },
+        "seriesLimit": {
+          "description": "SeriesLimit defines per-scrape limit on number of unique time series\na single target can expose during all the scrapes on the time window of 24h.",
+          "format": "int64",
+          "type": "integer"
         },
         "targets": {
           "description": "Targets defines a set of static and/or dynamically discovered targets to be probed using the prober.",
@@ -297,7 +408,7 @@
                   "description": "Select Ingress objects by namespace.",
                   "properties": {
                     "any": {
-                      "description": "Boolean describing whether all namespaces are selected in contrast to a list restricting them.",
+                      "description": "Boolean describing whether all namespaces are selected in contrast to a\nlist restricting them.",
                       "type": "boolean"
                     },
                     "matchNames": {
@@ -312,17 +423,17 @@
                   "additionalProperties": false
                 },
                 "relabelingConfigs": {
-                  "description": "RelabelConfigs to apply to samples before ingestion. More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config",
+                  "description": "RelabelConfigs to apply to samples during service discovery.",
                   "items": {
-                    "description": "RelabelConfig allows dynamic rewriting of the label set, being applied to samples before ingestion. It defines `<metric_relabel_configs>`-section of configuration. More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs",
+                    "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/#relabeling",
                     "properties": {
                       "action": {
                         "description": "Action to perform based on regex matching. Default is 'replace'",
                         "type": "string"
                       },
                       "if": {
-                        "description": "If represents metricsQL match expression: '{__name__=~\"foo_.*\"}'",
-                        "type": "string"
+                        "description": "If represents metricsQL match expression (or list of expressions): '{__name__=~\"foo_.*\"}'",
+                        "x-kubernetes-preserve-unknown-fields": true
                       },
                       "labels": {
                         "additionalProperties": {
@@ -341,11 +452,11 @@
                         "type": "integer"
                       },
                       "regex": {
-                        "description": "Regular expression against which the extracted value is matched. Default is '(.*)'",
-                        "type": "string"
+                        "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/vmagent/#relabeling-enhancements",
+                        "x-kubernetes-preserve-unknown-fields": true
                       },
                       "replacement": {
-                        "description": "Replacement value against which a regex replace is performed if the regular expression matches. Regex capture groups are available. Default is '$1'",
+                        "description": "Replacement value against which a regex replace is performed if the\nregular expression matches. Regex capture groups are available. Default is '$1'",
                         "type": "string"
                       },
                       "separator": {
@@ -353,25 +464,25 @@
                         "type": "string"
                       },
                       "source_labels": {
-                        "description": "UnderScoreSourceLabels - additional form of source labels source_labels for compatibility with original relabel config. if set  both sourceLabels and source_labels, sourceLabels has priority. for details https://github.com/VictoriaMetrics/operator/issues/131",
+                        "description": "UnderScoreSourceLabels - additional form of source labels source_labels\nfor compatibility with original relabel config.\nif set  both sourceLabels and source_labels, sourceLabels has priority.\nfor details https://github.com/VictoriaMetrics/operator/issues/131",
                         "items": {
                           "type": "string"
                         },
                         "type": "array"
                       },
                       "sourceLabels": {
-                        "description": "The source labels select values from existing labels. Their content is concatenated using the configured separator and matched against the configured regular expression for the replace, keep, and drop actions.",
+                        "description": "The source labels select values from existing labels. Their content is concatenated\nusing the configured separator and matched against the configured regular expression\nfor the replace, keep, and drop actions.",
                         "items": {
                           "type": "string"
                         },
                         "type": "array"
                       },
                       "target_label": {
-                        "description": "UnderScoreTargetLabel - additional form of target label - target_label for compatibility with original relabel config. if set  both targetLabel and target_label, targetLabel has priority. for details https://github.com/VictoriaMetrics/operator/issues/131",
+                        "description": "UnderScoreTargetLabel - additional form of target label - target_label\nfor compatibility with original relabel config.\nif set  both targetLabel and target_label, targetLabel has priority.\nfor details https://github.com/VictoriaMetrics/operator/issues/131",
                         "type": "string"
                       },
                       "targetLabel": {
-                        "description": "Label to which the resulting value is written in a replace action. It is mandatory for replace actions. Regex capture groups are available.",
+                        "description": "Label to which the resulting value is written in a replace action.\nIt is mandatory for replace actions. Regex capture groups are available.",
                         "type": "string"
                       }
                     },
@@ -386,22 +497,23 @@
                     "matchExpressions": {
                       "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
                       "items": {
-                        "description": "A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
+                        "description": "A label selector requirement is a selector that contains values, a key, and an operator that\nrelates the key and values.",
                         "properties": {
                           "key": {
                             "description": "key is the label key that the selector applies to.",
                             "type": "string"
                           },
                           "operator": {
-                            "description": "operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.",
+                            "description": "operator represents a key's relationship to a set of values.\nValid operators are In, NotIn, Exists and DoesNotExist.",
                             "type": "string"
                           },
                           "values": {
-                            "description": "values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.",
+                            "description": "values is an array of string values. If the operator is In or NotIn,\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\nthe values array must be empty. This array is replaced during a strategic\nmerge patch.",
                             "items": {
                               "type": "string"
                             },
-                            "type": "array"
+                            "type": "array",
+                            "x-kubernetes-list-type": "atomic"
                           }
                         },
                         "required": [
@@ -411,13 +523,14 @@
                         "type": "object",
                         "additionalProperties": false
                       },
-                      "type": "array"
+                      "type": "array",
+                      "x-kubernetes-list-type": "atomic"
                     },
                     "matchLabels": {
                       "additionalProperties": {
                         "type": "string"
                       },
-                      "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+                      "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\nmap is equivalent to an element of matchExpressions, whose key field is \"key\", the\noperator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
                       "type": "object"
                     }
                   },
@@ -430,7 +543,7 @@
               "additionalProperties": false
             },
             "staticConfig": {
-              "description": "StaticConfig defines static targets which are considers for probing. More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_config.",
+              "description": "StaticConfig defines static targets which are considers for probing.",
               "properties": {
                 "labels": {
                   "additionalProperties": {
@@ -440,17 +553,17 @@
                   "type": "object"
                 },
                 "relabelingConfigs": {
-                  "description": "More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config",
+                  "description": "RelabelConfigs to apply to samples during service discovery.",
                   "items": {
-                    "description": "RelabelConfig allows dynamic rewriting of the label set, being applied to samples before ingestion. It defines `<metric_relabel_configs>`-section of configuration. More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs",
+                    "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/#relabeling",
                     "properties": {
                       "action": {
                         "description": "Action to perform based on regex matching. Default is 'replace'",
                         "type": "string"
                       },
                       "if": {
-                        "description": "If represents metricsQL match expression: '{__name__=~\"foo_.*\"}'",
-                        "type": "string"
+                        "description": "If represents metricsQL match expression (or list of expressions): '{__name__=~\"foo_.*\"}'",
+                        "x-kubernetes-preserve-unknown-fields": true
                       },
                       "labels": {
                         "additionalProperties": {
@@ -469,11 +582,11 @@
                         "type": "integer"
                       },
                       "regex": {
-                        "description": "Regular expression against which the extracted value is matched. Default is '(.*)'",
-                        "type": "string"
+                        "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/vmagent/#relabeling-enhancements",
+                        "x-kubernetes-preserve-unknown-fields": true
                       },
                       "replacement": {
-                        "description": "Replacement value against which a regex replace is performed if the regular expression matches. Regex capture groups are available. Default is '$1'",
+                        "description": "Replacement value against which a regex replace is performed if the\nregular expression matches. Regex capture groups are available. Default is '$1'",
                         "type": "string"
                       },
                       "separator": {
@@ -481,25 +594,25 @@
                         "type": "string"
                       },
                       "source_labels": {
-                        "description": "UnderScoreSourceLabels - additional form of source labels source_labels for compatibility with original relabel config. if set  both sourceLabels and source_labels, sourceLabels has priority. for details https://github.com/VictoriaMetrics/operator/issues/131",
+                        "description": "UnderScoreSourceLabels - additional form of source labels source_labels\nfor compatibility with original relabel config.\nif set  both sourceLabels and source_labels, sourceLabels has priority.\nfor details https://github.com/VictoriaMetrics/operator/issues/131",
                         "items": {
                           "type": "string"
                         },
                         "type": "array"
                       },
                       "sourceLabels": {
-                        "description": "The source labels select values from existing labels. Their content is concatenated using the configured separator and matched against the configured regular expression for the replace, keep, and drop actions.",
+                        "description": "The source labels select values from existing labels. Their content is concatenated\nusing the configured separator and matched against the configured regular expression\nfor the replace, keep, and drop actions.",
                         "items": {
                           "type": "string"
                         },
                         "type": "array"
                       },
                       "target_label": {
-                        "description": "UnderScoreTargetLabel - additional form of target label - target_label for compatibility with original relabel config. if set  both targetLabel and target_label, targetLabel has priority. for details https://github.com/VictoriaMetrics/operator/issues/131",
+                        "description": "UnderScoreTargetLabel - additional form of target label - target_label\nfor compatibility with original relabel config.\nif set  both targetLabel and target_label, targetLabel has priority.\nfor details https://github.com/VictoriaMetrics/operator/issues/131",
                         "type": "string"
                       },
                       "targetLabel": {
-                        "description": "Label to which the resulting value is written in a replace action. It is mandatory for replace actions. Regex capture groups are available.",
+                        "description": "Label to which the resulting value is written in a replace action.\nIt is mandatory for replace actions. Regex capture groups are available.",
                         "type": "string"
                       }
                     },
@@ -540,7 +653,8 @@
                       "type": "string"
                     },
                     "name": {
-                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -563,7 +677,8 @@
                       "type": "string"
                     },
                     "name": {
-                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -597,7 +712,8 @@
                       "type": "string"
                     },
                     "name": {
-                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -620,7 +736,8 @@
                       "type": "string"
                     },
                     "name": {
-                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -659,7 +776,8 @@
                   "type": "string"
                 },
                 "name": {
-                  "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                  "default": "",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -683,42 +801,42 @@
           "additionalProperties": false
         },
         "vm_scrape_params": {
-          "description": "VMScrapeParams defines VictoriaMetrics specific scrape parametrs",
+          "description": "VMScrapeParams defines VictoriaMetrics specific scrape parameters",
           "properties": {
             "disable_compression": {
+              "description": "DisableCompression",
               "type": "boolean"
             },
             "disable_keep_alive": {
+              "description": "disable_keepalive allows disabling HTTP keep-alive when scraping targets.\nBy default, HTTP keep-alive is enabled, so TCP connections to scrape targets\ncould be re-used.\nSee https://docs.victoriametrics.com/vmagent#scrape_config-enhancements",
               "type": "boolean"
             },
             "headers": {
-              "description": "Headers allows sending custom headers to scrape targets must be in of semicolon separated header with it's value eg: headerName: headerValue vmagent supports since 1.79.0 version",
+              "description": "Headers allows sending custom headers to scrape targets\nmust be in of semicolon separated header with it's value\neg:\nheaderName: headerValue\nvmagent supports since 1.79.0 version",
               "items": {
                 "type": "string"
               },
               "type": "array"
             },
-            "metric_relabel_debug": {
-              "type": "boolean"
-            },
             "no_stale_markers": {
               "type": "boolean"
             },
             "proxy_client_config": {
-              "description": "ProxyClientConfig configures proxy auth settings for scraping See feature description https://docs.victoriametrics.com/vmagent.html#scraping-targets-via-a-proxy",
+              "description": "ProxyClientConfig configures proxy auth settings for scraping\nSee feature description https://docs.victoriametrics.com/vmagent#scraping-targets-via-a-proxy",
               "properties": {
                 "basic_auth": {
                   "description": "BasicAuth allow an endpoint to authenticate over basic authentication",
                   "properties": {
                     "password": {
-                      "description": "The secret in the service scrape namespace that contains the password for authentication. It must be at them same namespace as CRD",
+                      "description": "Password defines reference for secret with password value\nThe secret needs to be in the same namespace as scrape object",
                       "properties": {
                         "key": {
                           "description": "The key of the secret to select from.  Must be a valid secret key.",
                           "type": "string"
                         },
                         "name": {
-                          "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                          "default": "",
+                          "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                           "type": "string"
                         },
                         "optional": {
@@ -734,18 +852,19 @@
                       "additionalProperties": false
                     },
                     "password_file": {
-                      "description": "PasswordFile defines path to password file at disk",
+                      "description": "PasswordFile defines path to password file at disk\nmust be pre-mounted",
                       "type": "string"
                     },
                     "username": {
-                      "description": "The secret in the service scrape namespace that contains the username for authentication. It must be at them same namespace as CRD",
+                      "description": "Username defines reference for secret with username value\nThe secret needs to be in the same namespace as scrape object",
                       "properties": {
                         "key": {
                           "description": "The key of the secret to select from.  Must be a valid secret key.",
                           "type": "string"
                         },
                         "name": {
-                          "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                          "default": "",
+                          "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                           "type": "string"
                         },
                         "optional": {
@@ -772,7 +891,8 @@
                       "type": "string"
                     },
                     "name": {
-                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -804,7 +924,8 @@
                               "type": "string"
                             },
                             "name": {
-                              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                              "default": "",
+                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                               "type": "string"
                             },
                             "optional": {
@@ -827,7 +948,8 @@
                               "type": "string"
                             },
                             "name": {
-                              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                              "default": "",
+                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                               "type": "string"
                             },
                             "optional": {
@@ -861,7 +983,8 @@
                               "type": "string"
                             },
                             "name": {
-                              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                              "default": "",
+                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                               "type": "string"
                             },
                             "optional": {
@@ -884,7 +1007,8 @@
                               "type": "string"
                             },
                             "name": {
-                              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                              "default": "",
+                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                               "type": "string"
                             },
                             "optional": {
@@ -923,7 +1047,8 @@
                           "type": "string"
                         },
                         "name": {
-                          "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                          "default": "",
+                          "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                           "type": "string"
                         },
                         "optional": {
@@ -950,9 +1075,6 @@
               "type": "object",
               "additionalProperties": false
             },
-            "relabel_debug": {
-              "type": "boolean"
-            },
             "scrape_align_interval": {
               "type": "string"
             },
@@ -967,14 +1089,14 @@
           "additionalProperties": false
         },
         "vmProberSpec": {
-          "description": "Specification for the prober to use for probing targets. The prober.URL parameter is required. Targets cannot be probed if left empty.",
+          "description": "Specification for the prober to use for probing targets.\nThe prober.URL parameter is required. Targets cannot be probed if left empty.",
           "properties": {
             "path": {
-              "description": "Path to collect metrics from. Defaults to `/probe`.",
+              "description": "Path to collect metrics from.\nDefaults to `/probe`.",
               "type": "string"
             },
             "scheme": {
-              "description": "HTTP scheme to use for scraping. Defaults to `http`.",
+              "description": "HTTP scheme to use for scraping.\nDefaults to `http`.",
               "enum": [
                 "http",
                 "https"
@@ -1000,8 +1122,87 @@
       "additionalProperties": false
     },
     "status": {
-      "description": "VMProbeStatus defines the observed state of VMProbe",
-      "type": "object"
+      "description": "ScrapeObjectStatus defines the observed state of ScrapeObjects",
+      "properties": {
+        "conditions": {
+          "description": "Known .status.conditions.type are: \"Available\", \"Progressing\", and \"Degraded\"",
+          "items": {
+            "description": "Condition defines status condition of the resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "lastTransitionTime is the last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "lastUpdateTime": {
+                "description": "LastUpdateTime is the last time of given type update.\nThis value is used for status TTL update and removal",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "message is a human readable message indicating details about the transition.\nThis may be an empty string.",
+                "maxLength": 32768,
+                "type": "string"
+              },
+              "observedGeneration": {
+                "description": "observedGeneration represents the .metadata.generation that the condition was set based upon.\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\nwith respect to the current state of the instance.",
+                "format": "int64",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "reason": {
+                "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition.\nProducers of specific condition types may define expected values and meanings for this field,\nand whether the values are considered a guaranteed API.\nThe value should be a CamelCase string.\nThis field may not be empty.",
+                "maxLength": 1024,
+                "minLength": 1,
+                "type": "string"
+              },
+              "status": {
+                "description": "status of the condition, one of True, False, Unknown.",
+                "enum": [
+                  "True",
+                  "False",
+                  "Unknown"
+                ],
+                "type": "string"
+              },
+              "type": {
+                "description": "Type of condition in CamelCase or in name.namespace.resource.victoriametrics.com/CamelCase.",
+                "maxLength": 316,
+                "type": "string"
+              }
+            },
+            "required": [
+              "lastTransitionTime",
+              "lastUpdateTime",
+              "reason",
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "type"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration defines current generation picked by operator for the\nreconcile",
+          "format": "int64",
+          "type": "integer"
+        },
+        "reason": {
+          "description": "Reason defines human readable error reason",
+          "type": "string"
+        },
+        "updateStatus": {
+          "description": "UpdateStatus defines a status for update rollout",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     }
   },
   "required": [
